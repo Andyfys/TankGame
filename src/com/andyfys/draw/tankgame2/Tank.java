@@ -9,7 +9,16 @@ public class Tank {
     private int y;
     private int direction;
     private int type;
-    private int speed = 1;
+    private int speed = 2;
+    private boolean state = true;
+
+    public boolean isState() {
+        return state;
+    }
+
+    public void setState(boolean state) {
+        this.state = state;
+    }
 
     public int getSpeed() {
         return speed;
@@ -34,7 +43,7 @@ public class Tank {
     public void setDirection(int direction) {
         this.direction = direction;
     }
-
+    public Tank(){}
     public Tank(int x, int y, int speed) {
         this.x = x;
         this.y = y;
@@ -56,24 +65,39 @@ public class Tank {
     public void setY(int y) {
         this.y = y;
     }
+//    public void isBoraded
+public void moveUp() {
+    y -= speed;
+}
 
-    public void move(int patten) {
-        switch (patten) {
-            case 0:
-                y -= speed;
-                break;
-            case 1:
-                x += speed;
-                break;
-            case 2:
-                y += speed;
-                break;
-            case 3:
-                x -= speed;
-                break;
-            default:
-                System.out.println("不合法");
-        }
+    public void moveRight() {
+        x += speed;
     }
+
+    public void moveDown() {
+        y += speed;
+    }
+
+    public void moveLeft() {
+        x -= speed;
+    }
+//    public void move(int patten) {
+//        switch (patten) {
+//            case 0:
+//                y -= speed;
+//                break;
+//            case 1:
+//                x += speed;
+//                break;
+//            case 2:
+//                y += speed;
+//                break;
+//            case 3:
+//                x -= speed;
+//                break;
+//            default:
+//                System.out.println("不合法");
+//        }
+//    }
 
 }
