@@ -48,6 +48,7 @@ public class Tank {
         this.x = x;
         this.y = y;
         this.speed = speed;
+        this.type = 0;
     }
 
     public int getX() {

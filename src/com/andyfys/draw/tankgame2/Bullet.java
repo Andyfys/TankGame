@@ -84,7 +84,7 @@ public class Bullet implements Runnable {
                 default:
                     System.out.println("不合法");
             }
-            System.out.println("x:\t" + x + "\ty:" + y);
+//            System.out.println("子弹\tx:\t" + x + "\ty:" + y);
             //这里的条件没有想清楚
             if (!(x >= 0 && x <= 1000 && y >= 0 && y <= 750 && isState())) {
                 System.out.println("子弹线程结束");

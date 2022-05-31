@@ -1,10 +1,14 @@
 package com.andyfys.draw.tankgame2;
 
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.util.Scanner;
 import java.util.Vector;
 
 /**
@@ -23,20 +27,64 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
     Image image3 = null;
 
     public MyPanel() {
-
+        System.out.println("请输入： 1:新游戏\t 2: 继续游戏");
+        int num = new Scanner(System.in).nextInt();
         myTank = new MyTank(300, 300, 2);
         //myTanks.add(myTank);
-        for (int i = 0; i < enemyTankSize; i++) {
-            EnemyTank enemyTank = new EnemyTank((100 * (i + 1)), 2, 2);
-//            Bullet bullet = new Bullet(enemyTank.getX() + 20, enemyTank.getY() + 60, enemyTank.getDirection());
-//            enemyTank.getVector().add(bullet);
-//
-//
-//            new Thread(bullet).start();
-            new Thread(enemyTank).start();
-            enemyTanks.add(enemyTank);
 
+        File file = new File(MyRecord.getFilePath());
+        if(!file.exists()){
+            System.out.println("存档文件不存在，重新开始游戏");
+            num = 1;
         }
+        new AePlayWave("src\\111.wav").run();
+        switch (num){
+            case 1:
+                for (int i = 0; i < enemyTankSize; i++) {
+                    EnemyTank enemyTank = new EnemyTank((100 * (i + 1)), 2, 2);
+                    enemyTank.setEnemyTanks(enemyTanks);
+                    new Thread(enemyTank).start();
+                    enemyTanks.add(enemyTank);
+                }
+                break;
+            case 2:
+                MyRecord.readRecord();
+//                enemyTanks = MyRecord.getEnemyTanks();
+                for (int i = 0; i < MyRecord.getNodes().size(); i++) {
+                    EnemyTank enemyTank = new EnemyTank(MyRecord.getNodes().get(i).getX(), MyRecord.getNodes().get(i).getY(), 2);
+                    enemyTank.setDirection(MyRecord.getNodes().get(i).getDirection());
+                    enemyTanks.add(enemyTank);
+                    new Thread(enemyTank).start();
+                    enemyTank.setEnemyTanks(enemyTanks);
+                }
+                break;
+            default:
+                System.out.println("文件不存在");
+        }
+//        if (num == 1) {
+//
+//
+//        } else if (num == 2) {
+//            MyRecord.readRecord();
+////                enemyTanks = MyRecord.getEnemyTanks();
+//            for (int i = 0; i < MyRecord.getNodes().size(); i++) {
+//                EnemyTank enemyTank = new EnemyTank(MyRecord.getNodes().get(i).getX(), MyRecord.getNodes().get(i).getY(), 2);
+//                enemyTank.setDirection(MyRecord.getNodes().get(i).getDirection());
+//                enemyTanks.add(enemyTank);
+//                new Thread(enemyTank).start();
+//                enemyTank.setEnemyTanks(enemyTanks);
+//            }
+//        }
+
+//        for (int i = 0; i < enemyTankSize; i++) {
+//            EnemyTank enemyTank = new EnemyTank((100 * (i + 1)), 2, 2);
+//            enemyTank.setEnemyTanks(enemyTanks);
+//            new Thread(enemyTank).start();
+//            enemyTanks.add(enemyTank);
+//        }
+//
+
+        MyRecord.setEnemyTanks(enemyTanks);
         image1 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/bomb_1.gif"));
         image2 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/bomb_2.gif"));
         image3 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/bomb_3.gif"));
@@ -48,8 +96,10 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
         super.paint(g);
         g.fillRect(0, 0, 1000, 750);
 
+        //绘制计分板
+        showInfo(g);
 
-        if(myTank.isState() && myTanks != null){
+        if (myTank.isState() && myTanks != null) {
             drawTank(myTank.getX(), myTank.getY(), g, myTank.getType(), myTank.getDirection());
         }
 
@@ -110,56 +160,71 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
 
     }
 
+    /**
+     * 绘制计分板
+     */
+
+    public void showInfo(Graphics g) {
+
+        String score = MyRecord.getCount() + "";
+        g.setColor(Color.BLACK);
+        //设置字体
+        Font font = new Font("宋体", Font.BOLD, 25);
+        g.setFont(font);
+        g.drawString(score, 1100, 110);
+        g.drawString("您累计击毁敌方坦克", 1020, 30);
+        drawTank(1010, 100, g, 0, 0);
+
+    }
+
     public void drawTank(int x, int y, Graphics g, int type, int direction) {
 
-            switch (type) {
-                case 0:
-                    g.setColor(Color.cyan);
-                    break;
-                case 1:
-                    g.setColor(Color.yellow);
-                    break;
-                default:
-                    System.out.println(-1);
-            }
-            switch (direction) {
-                // UP
-                case 0:
-                    g.fill3DRect(x, y, 10, 60, false);
-                    g.fill3DRect(x + 30, y, 10, 60, false);
-                    g.fill3DRect(x + 10, y + 10, 20, 40, false);
-                    g.fillOval(x + 10, y + 20, 20, 20);
-                    g.drawLine(x + 20, y + 30, x + 20, y);
-                    break;
-                // RIGHT
-                case 1:
-                    g.fill3DRect(x, y, 60, 10, false);
-                    g.fill3DRect(x, y + 30, 60, 10, false);
-                    g.fill3DRect(x + 10, y + 10, 40, 20, false);
-                    g.fillOval(x + 20, y + 10, 20, 20);
-                    g.drawLine(x + 30, y + 20, x + 60, y + 20);
-                    break;
-                //DOWN
-                case 2:
-                    g.fill3DRect(x, y, 10, 60, false);
-                    g.fill3DRect(x + 30, y, 10, 60, false);
-                    g.fill3DRect(x + 10, y + 10, 20, 40, false);
-                    g.fillOval(x + 10, y + 20, 20, 20);
-                    g.drawLine(x + 20, y + 30, x + 20, y + 60);
-                    break;
-                case 3:
-                    g.fill3DRect(x, y, 60, 10, false);
-                    g.fill3DRect(x, y + 30, 60, 10, false);
-                    g.fill3DRect(x + 10, y + 10, 40, 20, false);
-                    g.fillOval(x + 20, y + 10, 20, 20);
-                    g.drawLine(x + 30, y + 20, x, y + 20);
-                    break;
-                default:
-                    System.out.println("输入非法");
-            }
+        switch (type) {
+            case 0:
+                g.setColor(Color.cyan);
+                break;
+            case 1:
+                g.setColor(Color.yellow);
+                break;
+            default:
+                System.out.println(-1);
         }
-
-
+        switch (direction) {
+            // UP
+            case 0:
+                g.fill3DRect(x, y, 10, 60, false);
+                g.fill3DRect(x + 30, y, 10, 60, false);
+                g.fill3DRect(x + 10, y + 10, 20, 40, false);
+                g.fillOval(x + 10, y + 20, 20, 20);
+                g.drawLine(x + 20, y + 30, x + 20, y);
+                break;
+            // RIGHT
+            case 1:
+                g.fill3DRect(x, y, 60, 10, false);
+                g.fill3DRect(x, y + 30, 60, 10, false);
+                g.fill3DRect(x + 10, y + 10, 40, 20, false);
+                g.fillOval(x + 20, y + 10, 20, 20);
+                g.drawLine(x + 30, y + 20, x + 60, y + 20);
+                break;
+            //DOWN
+            case 2:
+                g.fill3DRect(x, y, 10, 60, false);
+                g.fill3DRect(x + 30, y, 10, 60, false);
+                g.fill3DRect(x + 10, y + 10, 20, 40, false);
+                g.fillOval(x + 10, y + 20, 20, 20);
+                g.drawLine(x + 20, y + 30, x + 20, y + 60);
+                break;
+            case 3:
+                g.fill3DRect(x, y, 60, 10, false);
+                g.fill3DRect(x, y + 30, 60, 10, false);
+                g.fill3DRect(x + 10, y + 10, 40, 20, false);
+                g.fillOval(x + 20, y + 10, 20, 20);
+                g.drawLine(x + 30, y + 20, x, y + 20);
+                break;
+            default:
+                System.out.println("输入非法");
+        }
+    }
 
 
     public void isHitEnemy(MyTank myTank) {
@@ -182,7 +247,7 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
             for (int j = 0; j < enemyTank.getVector().size(); j++) {
                 Bullet bullet = enemyTank.getVector().get(j);
                 if (myTank.isState() && bullet.isState()) {
-                    isHist(bullet,myTank);
+                    isHist(bullet, myTank);
 //                    switch (myTank.getDirection()) {
 //                        case 0:
 //                        case 2:
@@ -235,6 +300,9 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
                     enemyTank.setState(false);
                     bombs.add(new Bomb(enemyTank.getX(), enemyTank.getY()));
                     enemyTanks.remove(enemyTank);
+                    if (enemyTank instanceof EnemyTank) {
+                        MyRecord.record();
+                    }
                     //移除击中地方坦克的子弹
                     myTank.getVector().remove(bullet);
 
@@ -248,6 +316,9 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
                     enemyTank.setState(false);
                     bombs.add(new Bomb(enemyTank.getX(), enemyTank.getY()));
                     enemyTanks.remove(enemyTank);
+                    if (enemyTank instanceof EnemyTank) {
+                        MyRecord.record();
+                    }
                     myTank.getVector().remove(bullet);
                 }
                 break;

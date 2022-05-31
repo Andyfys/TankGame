@@ -17,6 +17,11 @@ public class EnemyTank extends Tank implements Runnable {
 
     private Vector<Bullet> vector = new Vector<>();
     private boolean state = true;
+    private Vector<EnemyTank> enemyTanks;
+
+    public void setEnemyTanks(Vector<EnemyTank> enemyTanks) {
+        this.enemyTanks = enemyTanks;
+    }
 
     public boolean isState() {
         return state;
@@ -38,6 +43,176 @@ public class EnemyTank extends Tank implements Runnable {
 
     public void setVector(Vector<Bullet> vector) {
         this.vector = vector;
+    }
+
+    /**
+     * 判断敌方坦克是否碰撞
+     * 写在这里主要是可以由坦克直接调用，直接去于其他的坦克进行比较
+     */
+    @SuppressWarnings({"all"})
+    public boolean isOverlap() {
+
+        //
+        switch (getDirection()) {
+            // up
+            case 0:
+                //
+                for (int i = 0; i < enemyTanks.size(); i++) {
+                    EnemyTank enemyTank = enemyTanks.get(i);
+                    //这里写入逻辑结构，能够防止自己与自己比较
+                    if (enemyTank != this) {
+                        //当主比较坦克为上时候，被比较坦克可为上/下，或左/右
+                        if (enemyTank.getDirection() == 0 || enemyTank.getDirection() == 2) {
+                            //被比较坦克为上下
+                            if (getX() >= enemyTank.getX()
+                                    && getX() <= enemyTank.getX() + 40
+                                    && getY() >= enemyTank.getY()
+                                    && getY() <= enemyTank.getY() + 60
+
+                                    || getX() + 40 >= enemyTank.getX()
+                                    && getX() + 40 <=enemyTank.getX() + 40
+                                    && getY() >= enemyTank.getY()
+                                    && getY() <= enemyTank.getY() + 60) {
+                                return true;
+                            }
+                        }
+                        if (enemyTank.getDirection() == 1 || enemyTank.getDirection() == 3) {
+                            //左右
+                            if (getX() > enemyTank.getX()
+                                    && getX() <= enemyTank.getX() + 60
+                                    && getY() >= enemyTank.getY()
+                                    && getY() <= enemyTank.getY() + 40
+
+                                    || getX() + 40 >= enemyTank.getX()
+                                    && getX() + 40 <= enemyTank.getX() + 60
+                                    && getY() >= enemyTank.getY()
+                                    && getY() <= enemyTank.getY() + 40) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                break;
+            case 1:
+                //右
+                for (int i = 0; i < enemyTanks.size(); i++) {
+                    EnemyTank enemyTank = enemyTanks.get(i);
+                    //这里写入逻辑结构，能够防止自己与自己比较
+                    if (enemyTank != this) {
+                        //当主比较坦克为上时候，被比较坦克可为上/下，或左/右
+                        if (enemyTank.getDirection() == 0 || enemyTank.getDirection() == 2) {
+                            //被比较坦克为上下
+                            if (getX() + 60 >= enemyTank.getX()
+                                    && getX() + 60 <= enemyTank.getX() + 40
+                                    && getY() >=enemyTank.getY()
+                                    && getY() <= enemyTank.getY() + 60
+
+                                    || getX() + 60 >= enemyTank.getX()
+                                    && getX() + 60 <= enemyTank.getX() + 40
+                                    && getY() + 40 >= enemyTank.getY()
+                                    && getY() + 40 <= enemyTank.getY() + 60) {
+                                return true;
+                            }
+                        }
+                        if (enemyTank.getDirection() == 1 || enemyTank.getDirection() == 3) {
+                            //左右
+                            if (getX() + 60 >=enemyTank.getX()
+                                    && getX() + 60 <= enemyTank.getX() + 60
+                                    && getY() >= enemyTank.getY()
+                                    && getY() <= enemyTank.getY() + 40
+
+                                    || getX() + 60 >= enemyTank.getX()
+                                    && getX() + 60 <= enemyTank.getX() + 60
+                                    && getY() + 40 >= enemyTank.getY()
+                                    && getY() + 40 <= enemyTank.getY() + 40) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                break;
+            case 2:
+                //下
+                for (int i = 0; i < enemyTanks.size(); i++) {
+                    EnemyTank enemyTank = enemyTanks.get(i);
+                    //这里写入逻辑结构，能够防止自己与自己比较
+                    if (enemyTank != this) {
+                        //当主比较坦克为上时候，被比较坦克可为上/下，或左/右
+                        if (enemyTank.getDirection() == 0 || enemyTank.getDirection() == 2) {
+                            //被比较坦克为上下
+                            if (getX() >= enemyTank.getX()
+                                    && getX() <=enemyTank.getX() + 40
+                                    && getY() + 60 >= enemyTank.getY()
+                                    && getY() + 60 <= enemyTank.getY() + 60
+
+                                    || getX() + 40 >= enemyTank.getX()
+                                    && getX() + 40 <= enemyTank.getX() + 40
+                                    && getY() + 60 >= enemyTank.getY()
+                                    && getY() + 60 <= enemyTank.getY() + 60) {
+                                return true;
+                            }
+                        }
+                        if (enemyTank.getDirection() == 1 || enemyTank.getDirection() == 3) {
+                            //左右
+                            if (getX() >= enemyTank.getX()
+                                    && getX() <= enemyTank.getX() + 60
+                                    && getY() + 60 >= enemyTank.getY()
+                                    && getY() + 60 <= enemyTank.getY() + 40
+
+                                    || getX() + 40 >= enemyTank.getX()
+                                    && getX() + 40 <= enemyTank.getX() + 60
+                                    && getY() + 60 >= enemyTank.getY()
+                                    && getY() + 60 <= enemyTank.getY() + 40) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                break;
+            case 3:
+                //左
+                for (int i = 0; i < enemyTanks.size(); i++) {
+                    EnemyTank enemyTank = enemyTanks.get(i);
+                    //这里写入逻辑结构，能够防止自己与自己比较
+                    if (enemyTank != this) {
+                        //当主比较坦克为上时候，被比较坦克可为上/下，或左/右
+                        if (enemyTank.getDirection() == 0 || enemyTank.getDirection() == 2) {
+                            //被比较坦克为上下
+                            if (getX() >= enemyTank.getX()
+                                    && getX() <= enemyTank.getX() + 40
+                                    && getY() >= enemyTank.getY()
+                                    && getY() <= enemyTank.getY() + 60
+
+                                    || getX() >= enemyTank.getX()
+                                    && getX() <= enemyTank.getX() + 40
+                                    && getY() + 40 >= enemyTank.getY()
+                                    && getY() + 40 <= enemyTank.getY() + 60) {
+                                return true;
+                            }
+                        }
+                        if (enemyTank.getDirection() == 1 || enemyTank.getDirection() == 3) {
+                            //左右
+                            if (getX() > enemyTank.getX()
+                                    && getX() <= enemyTank.getX() + 60
+                                    && getY() >= enemyTank.getY()
+                                    && getY() <= enemyTank.getY() + 40
+
+                                    || getX() >= enemyTank.getX()
+                                    && getX() <= enemyTank.getX() + 60
+                                    && getY() + 40 >= enemyTank.getY()
+                                    && getY() + 40 <= enemyTank.getY() + 40) {
+                                return true;
+                            }
+                        }
+
+                    }
+                }
+                break;
+            default:
+                System.out.println("-1");
+        }
+        return false;
+
     }
 
     @Override
@@ -68,7 +243,7 @@ public class EnemyTank extends Tank implements Runnable {
             switch (getDirection()) {
                 case 0:
                     for (int i = 0; i < 20; i++) {
-                        if (getY() > 0) {
+                        if (getY() > 0 && !isOverlap()) {
                             moveUp();
                         }
 
@@ -82,7 +257,7 @@ public class EnemyTank extends Tank implements Runnable {
 
                 case 1:
                     for (int i = 0; i < 20; i++) {
-                        if (getX() + 60 < 1000) {
+                        if (getX() + 60 < 1000 && !isOverlap()) {
                             moveRight();
                         }
 
@@ -95,7 +270,7 @@ public class EnemyTank extends Tank implements Runnable {
                     break;
                 case 2:
                     for (int i = 0; i < 20; i++) {
-                        if (getY() + 60 < 750) {
+                        if (getY() + 60 < 750 && !isOverlap()) {
                             moveDown();
                         }
 
@@ -108,7 +283,7 @@ public class EnemyTank extends Tank implements Runnable {
                     break;
                 case 3:
                     for (int i = 0; i < 20; i++) {
-                        if (getX() > 0) {
+                        if (getX() > 0 && !isOverlap()) {
                             moveLeft();
                         }
 
